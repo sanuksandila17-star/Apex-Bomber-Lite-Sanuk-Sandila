@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>VOID OS v5.3</title>
+    <style>
+        body { background: black; color: #00ff41; font-family: monospace; text-align: center; }
+        .panel { border: 1px solid #00ff41; padding: 20px; margin: 50px auto; width: 300px; }
+        input { background: transparent; border: 1px solid #00ff41; color: white; padding: 10px; margin: 10px; }
+        button { background: #00ff41; color: black; border: none; padding: 10px; cursor: pointer; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>VOID OS v5.3</h1>
+    <div class="panel" id="login">
+        <h3>ENTER ACCESS KEY</h3>
+        <input type="text" id="token" placeholder="APEX-XXXX">
+        <button onclick="login()">LOGIN</button>
+    </div>
+
+    <div class="panel" style="display:none;" id="console">
+        <h3>SYSTEM READY</h3>
+        <input type="text" id="target" placeholder="Phone Number">
+        <button onclick="send('IKMAN')">IKMAN OTP</button>
+        <button onclick="send('ICT')">ICT OTP</button>
+    </div>
+
+    <script>
+        async function login() {
+            let t = document.getElementById('token').value;
+            let res = await fetch('/api/verify', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({token: t})
+            });
+            let data = await res.json();
+            if(data.status === 'granted') {
+                document.getElementById('login').style.display = 'none';
+                document.getElementById('console').style.display = 'block';
+            } else { alert("Invalid Key!"); }
+        }
+
+        async function send(type) {
+            let target = document.getElementById('target').value;
+            await fetch('/api/attack', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({target: target, type: type})
+            });
+            alert("Sent!");
+        }
+    </script>
+</body>
+</html>
